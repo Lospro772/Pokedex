@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini-Pokédex</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <!-- Pantalla de bienvenida y animación cinematográfica estilo Evento Pokémon -->
+  <div id="intro-pokemon" class="intro-overlay" style="display: none;" aria-hidden="true">
+    <!-- Rayos luminosos rotatorios de fondo estilo Evento Misterioso -->
+    <div class="intro-rayos-fondo"></div>
+    <div class="intro-estrellas-fondo"></div>
+
+    <!-- Controles de accesibilidad del intro (sonido y omitir) -->
+    <button id="btn-sonido-intro" class="intro-btn-sonido" type="button" title="Activar o silenciar efectos de sonido retro" aria-label="Alternar sonido">
+      <span class="intro-sonido-icono">🔊</span> Sonido: ON
+    </button>
+    <button id="btn-omitir-intro" class="intro-btn-omitir" type="button" title="Omitir animación de bienvenida">
+      Omitir ✕
+    </button>
+
+    <div class="intro-contenido">
+      <!-- Escenario central de la Pokéball con sombra y reflejos -->
+      <div class="intro-escena-pokeball">
+        <div id="pokeball-loader" class="pokeball-animada">
+          <div class="pokeball-parte pokeball-parte--top">
+            <div class="pokeball-reflejo"></div>
+          </div>
+          <div class="pokeball-parte pokeball-parte--bottom"></div>
+          <div class="pokeball-cinturon"></div>
+          <div class="pokeball-centro">
+            <div class="pokeball-led"></div>
+          </div>
+          <!-- Destello expansivo al abrirse la Pokéball -->
+          <div class="pokeball-destello"></div>
+        </div>
+        <div class="pokeball-sombra-suelo"></div>
+      </div>
+
+      <!-- Destellos de estrellas estilo evento de la serie Pokémon -->
+      <div id="intro-destellos" class="intro-destellos">
+        <span class="destello destello--1">✦</span>
+        <span class="destello destello--2">★</span>
+        <span class="destello destello--3">✧</span>
+        <span class="destello destello--4">★</span>
+        <span class="destello destello--5">✦</span>
+        <span class="destello destello--6">✧</span>
+      </div>
+
+      <!-- Terminal cinemático de datos del Evento -->
+      <div class="intro-terminal">
+        <div class="intro-evento-badge">★ EVENTO DE APERTURA // KANTO 1996 ★</div>
+        <h2 class="intro-terminal__titulo">SISTEMA POKÉDEX NACIONAL</h2>
+        <p id="intro-estado" class="intro-terminal__estado">SINCRONIZANDO 151 ESPECIES...</p>
+        
+        <div class="intro-terminal__barra">
+          <div id="intro-progreso" class="intro-terminal__progreso"></div>
+        </div>
+        <div class="intro-terminal__pie">
+          <span id="intro-contador-texto" class="intro-terminal__contador">0</span> / 151 ESPECIES
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="contenedor">
+    <!-- Barra de hardware de la Pokédex (Lente y LEDs de Kanto) -->
+    <header class="pokedex-chasis">
+      <div class="pokedex-sensor">
+        <div class="pokedex-lente" title="Sensor Principal">
+          <div class="pokedex-lente__reflejo"></div>
+        </div>
+        <div class="pokedex-leds">
+          <span class="pokedex-led pokedex-led--rojo" title="Alimentación"></span>
+          <span class="pokedex-led pokedex-led--amarillo" title="Procesando"></span>
+          <span class="pokedex-led pokedex-led--verde" title="En línea"></span>
+        </div>
+      </div>
+      <div class="pokedex-titulo-bloque">
+        <h1>POKÉDEX NACIONAL</h1>
+        <div class="pokedex-subtitulo">
+          <span class="pokedex-tag-region">KANTO</span>
+          <span class="pokedex-tag-dex">151 ESPECIES REGISTRADAS</span>
+        </div>
+      </div>
+    </header>
+
+    <p class="introduccion">
+      Base de datos oficial de la 1.ª Generación. Introduce un nombre, identificador (#) o filtra por tipo elemental.
+    </p>
+    <!-- Botón de carga inicial (Requisito 4.1) -->
+    <div class="acciones-iniciales">
+      <button id="btn-cargar" class="btn-cargar" type="button">Cargar los 151 Pokémon</button>
+    </div>
+    <form id="formulario-busqueda" class="buscador">
+      <label for="busqueda">Nombre o número</label>
+      <div class="buscador__controles">
+        <input id="busqueda" name="busqueda" type="text" placeholder="Ejemplo: pikachu o 25" autocomplete="off"
+          disabled>
+        <select id="filtro-tipo" name="tipo" aria-label="Filtrar por tipo" disabled>
+          <option value="todos">Todos los tipos</option>
+        </select>
+        <button type="submit" disabled>Buscar</button>
+      </div>
+    </form>
+    <p id="mensaje" class="mensaje" aria-live="polite">Pulsa "Cargar los 151 Pokémon" para iniciar la Pokédex.</p>
+    <!-- Controles de vista y favoritos (Ampliaciones Voluntarias 10) -->
+    <div id="vista-controles" class="vista-controles" style="display: none;">
+      <button id="btn-filtro-favoritos" class="btn-favoritos" type="button" title="Filtrar por favoritos">
+        ★ Favoritos (<span id="contador-favoritos">0</span>)
+      </button>
+      <span class="vista-controles__etiqueta">Vista:</span>
+      <button id="btn-vista-cuadricula" class="btn-vista activo" type="button" title="Vista Cuadrícula">⊞ Cuadrícula</button>
+      <button id="btn-vista-lista" class="btn-vista" type="button" title="Vista Lista">☰ Lista</button>
+      <button id="btn-ver-intro" class="btn-vista" type="button" title="Revivir animación cinematográfica estilo Evento Pokémon">⚡ Ver Intro</button>
+    </div>
+    <section id="resultado" class="resultado"></section>
+
+
+    <!-- Ventana modal para información ampliada (Requisito 4.6) -->
+    <dialog id="modal-detalles" class="modal">
+      <div class="modal__contenido">
+        <button id="btn-cerrar-modal" class="modal__btn-cerrar" type="button" aria-label="Cerrar">&times;</button>
+        <div id="modal-cuerpo" class="modal__cuerpo">
+          <!-- Los detalles del Pokémon se inyectan dinámicamente con JS -->
+        </div>
+      </div>
+    </dialog>
+
+  </main>
+
+  <script src="js/Pokemon.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
