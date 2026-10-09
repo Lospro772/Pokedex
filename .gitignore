@@ -1,0 +1,27 @@
+# Dependencias y entornos
+node_modules/
+package-lock.json
+.env
+.env.local
+*.log
+
+# Archivos del Sistema Operativo
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+._*
+
+# Editores e IDEs (Visual Studio Code, JetBrains, etc.)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos temporales y borradores internos
+*.tmp
+*.temp
+README-GUIA.md
+README-DEFENSA.md
