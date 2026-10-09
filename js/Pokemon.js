@@ -4,6 +4,8 @@ class Pokemon {
     this.nombre = datos.name;
     this.spriteBack = datos.sprites.back_default;
     this.spriteFront = datos.sprites.front_default;
+    this.spriteShiny = datos.sprites.front_shiny || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${datos.id}.png`;
+    this.spriteShinyBack = datos.sprites.back_shiny || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/shiny/${datos.id}.png`;
     this.tipos = datos.types.map((t) => t.type.name);
     this.altura = datos.height / 10; // De decímetros a metros
     this.peso = datos.weight / 10;   // De hectogramos a kilos

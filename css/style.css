@@ -51,11 +51,15 @@ body {
   flex-wrap: wrap;
   gap: 1.25rem;
   background: linear-gradient(135deg, #dc2626 0%, #991b1b 60%, #7f1d1d 100%);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 1.25rem;
-  padding: 1.25rem 2rem;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.35);
-  margin-bottom: 1.75rem;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  border-bottom: 6px solid #450a0a;
+  border-radius: 1.35rem;
+  padding: 1.35rem 2.25rem;
+  box-shadow: 
+    0 20px 45px rgba(0, 0, 0, 0.75), 
+    inset 0 3px 5px rgba(255, 255, 255, 0.4),
+    0 4px 10px rgba(0, 0, 0, 0.5);
+  margin-bottom: 2.75rem;
   position: relative;
   overflow: hidden;
 }
@@ -460,77 +464,121 @@ body {
 
 .pokemon {
   position: relative;
-  flex: 0 1 340px;
+  flex: 0 1 330px;
   width: 100%;
-  max-width: 340px;
-  padding: 1.5rem 1.25rem;
+  max-width: 330px;
+  padding: 1.35rem 1.15rem 1.35rem 1.15rem;
   text-align: center;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(165deg, #131b2e 0%, #090d18 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-top: 5px solid #ef4444; /* Pestaña superior de hardware Pokédex */
   border-radius: 1.25rem;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.55);
+  box-shadow: 
+    0 16px 36px rgba(0, 0, 0, 0.7), 
+    inset 0 1px 2px rgba(255, 255, 255, 0.15),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.5);
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: hidden;
 }
 
 .pokemon:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.75);
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.82), 0 0 24px rgba(56, 189, 248, 0.22);
 }
 
-/* Número de la Pokédex en fuente Monospace digital */
+/* Indicador digital LED de escáner en la cabecera de la tarjeta */
 .pokemon__numero {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.75rem 0;
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #64748b;
-  letter-spacing: 0.08em;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.85rem;
+  background: #050811;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-/* Plataforma holográfica circular tras el sprite */
+.pokemon__numero::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+}
+
+/* Visor de escaneo LCD donde vive el espécimen */
 .pokemon__plataforma-imagen,
 .modal__plataforma-imagen {
-  width: 180px;
+  width: 100%;
+  max-width: 220px;
   height: 180px;
   margin: 0 auto;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.16) 0%, rgba(56, 189, 248, 0.03) 55%, transparent 72%);
+  border-radius: 1rem;
+  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.16) 0%, #050811 78%);
+  border: 1.5px solid rgba(56, 189, 248, 0.22);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.9), 0 4px 14px rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+/* Scanlines sutiles estilo pantalla de escáner Pokédex */
+.pokemon__plataforma-imagen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(56, 189, 248, 0.02) 0px,
+    rgba(56, 189, 248, 0.02) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  pointer-events: none;
 }
 
 .pokemon:hover .pokemon__plataforma-imagen {
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.26) 0%, rgba(56, 189, 248, 0.06) 60%, transparent 75%);
+  border-color: rgba(56, 189, 248, 0.45);
+  background: radial-gradient(circle at 50% 35%, rgba(56, 189, 248, 0.24) 0%, #050811 82%);
 }
 
 .pokemon__imagen {
-  width: 160px;
-  height: 160px;
+  width: 155px;
+  height: 155px;
   image-rendering: pixelated;
   cursor: pointer;
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  z-index: 2;
 }
 
 .pokemon:hover .pokemon__imagen {
-  transform: scale(1.12);
+  transform: scale(1.14);
 }
 
 .pokemon__nombre {
-  margin: 0.75rem 0 0.5rem 0;
-  font-size: 1.5rem;
+  margin: 0.85rem 0 0.55rem 0;
+  font-size: 1.45rem;
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
   text-transform: capitalize;
   color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
 }
 
-/* Chips de altura y peso */
+/* Cajas de métricas físicas como pantallas LCD de instrumentación */
 .pokemon__datos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -540,20 +588,23 @@ body {
 
 .pokemon__datos p {
   margin: 0;
-  padding: 0.6rem 0.5rem;
-  background: rgba(9, 13, 22, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 0.6rem;
-  font-size: 0.85rem;
-  color: #cbd5e1;
+  padding: 0.55rem 0.5rem;
+  background: #060913;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.65rem;
+  font-size: 0.9rem;
+  color: #f1f5f9;
+  font-weight: 800;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .pokemon__datos p strong {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #64748b;
+  letter-spacing: 0.08em;
+  color: #38bdf8;
+  font-family: var(--font-mono);
   margin-bottom: 0.2rem;
 }
 
@@ -565,64 +616,69 @@ body {
   margin-bottom: 1.25rem;
 }
 
-/* Botón 'Ver detalles' de la tarjeta */
+/* Botón 'Ver detalles' estilo botón táctil de Pokédex */
 .pokemon__btn-detalles {
   width: 100%;
-  padding: 0.7rem 1rem;
-  border: 0;
-  border-radius: 0.65rem;
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 50%, #991b1b 100%);
   color: #ffffff;
   font-family: var(--font-main);
   font-weight: 800;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);
-  transition: all 0.2s ease;
+  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.45), inset 0 1px 2px rgba(255, 255, 255, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
 }
 
 .pokemon__btn-detalles:hover {
-  background: linear-gradient(135deg, #f87171, #ef4444);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(220, 38, 38, 0.55);
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 50%, #b91c1c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
-/* Botón circular flotante de Favorito (Estrella) */
+/* Botón circular flotante de Favorito (Estrella de hardware) */
 .pokemon__btn-favorito {
   position: absolute;
   top: 0.85rem;
   right: 0.85rem;
-  width: 2.3rem;
-  height: 2.3rem;
+  width: 2.2rem;
+  height: 2.2rem;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(9, 13, 22, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(6, 9, 19, 0.85);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   color: #64748b;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-  z-index: 2;
+  z-index: 3;
   padding: 0;
   line-height: 1;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.6);
 }
 
 .pokemon__btn-favorito:hover {
   transform: scale(1.18);
   color: #facc15;
   background: rgba(30, 41, 59, 0.95);
-  border-color: rgba(250, 204, 21, 0.4);
+  border-color: rgba(250, 204, 21, 0.5);
 }
 
 .pokemon__btn-favorito.activo {
   color: #facc15;
-  background: rgba(250, 204, 21, 0.2);
+  background: rgba(250, 204, 21, 0.22);
   border-color: #facc15;
-  text-shadow: 0 0 10px rgba(250, 204, 21, 0.8);
+  text-shadow: 0 0 10px rgba(250, 204, 21, 0.9);
 }
 
 /* ==========================================================================
@@ -660,15 +716,45 @@ body {
 .tipo--steel    { background: linear-gradient(135deg, #94a3b8, #475569); box-shadow: 0 2px 10px rgba(100, 116, 139, 0.4); }
 .tipo--fairy    { background: linear-gradient(135deg, #f472b6, #db2777); box-shadow: 0 2px 10px rgba(244, 114, 182, 0.4); }
 
-/* Borde y halo reactivo según tipo principal */
-.pokemon--tipo-fire:hover     { border-color: rgba(249, 115, 22, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(249, 115, 22, 0.22); }
-.pokemon--tipo-water:hover    { border-color: rgba(56, 189, 248, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(56, 189, 248, 0.22); }
-.pokemon--tipo-grass:hover    { border-color: rgba(74, 222, 128, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(74, 222, 128, 0.22); }
-.pokemon--tipo-electric:hover { border-color: rgba(250, 204, 21, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(250, 204, 21, 0.22); }
-.pokemon--tipo-poison:hover   { border-color: rgba(192, 132, 252, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(192, 132, 252, 0.22); }
-.pokemon--tipo-psychic:hover  { border-color: rgba(244, 114, 182, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(244, 114, 182, 0.22); }
-.pokemon--tipo-ghost:hover    { border-color: rgba(167, 139, 250, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(167, 139, 250, 0.22); }
-.pokemon--tipo-dragon:hover   { border-color: rgba(129, 140, 248, 0.55); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 22px rgba(129, 140, 248, 0.22); }
+/* Personalización temática de la tarjeta según el tipo elemental del Pokémon */
+.pokemon--tipo-fire     { border-top-color: #f97316; }
+.pokemon--tipo-fire:hover { border-color: rgba(249, 115, 22, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(249, 115, 22, 0.28); }
+
+.pokemon--tipo-water    { border-top-color: #0ea5e9; }
+.pokemon--tipo-water:hover { border-color: rgba(14, 165, 233, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(14, 165, 233, 0.28); }
+
+.pokemon--tipo-grass    { border-top-color: #10b981; }
+.pokemon--tipo-grass:hover { border-color: rgba(16, 185, 129, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(16, 185, 129, 0.28); }
+
+.pokemon--tipo-electric { border-top-color: #facc15; }
+.pokemon--tipo-electric:hover { border-color: rgba(250, 204, 21, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(250, 204, 21, 0.28); }
+
+.pokemon--tipo-poison   { border-top-color: #a855f7; }
+.pokemon--tipo-poison:hover { border-color: rgba(168, 85, 247, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(168, 85, 247, 0.28); }
+
+.pokemon--tipo-psychic  { border-top-color: #f43f5e; }
+.pokemon--tipo-psychic:hover { border-color: rgba(244, 63, 94, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(244, 63, 94, 0.28); }
+
+.pokemon--tipo-ghost    { border-top-color: #8b5cf6; }
+.pokemon--tipo-ghost:hover { border-color: rgba(139, 92, 246, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(139, 92, 246, 0.28); }
+
+.pokemon--tipo-dragon   { border-top-color: #6366f1; }
+.pokemon--tipo-dragon:hover { border-color: rgba(99, 102, 241, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(99, 102, 241, 0.28); }
+
+.pokemon--tipo-ice      { border-top-color: #38bdf8; }
+.pokemon--tipo-ice:hover { border-color: rgba(56, 189, 248, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(56, 189, 248, 0.28); }
+
+.pokemon--tipo-ground   { border-top-color: #d97706; }
+.pokemon--tipo-ground:hover { border-color: rgba(217, 119, 6, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(217, 119, 6, 0.28); }
+
+.pokemon--tipo-bug      { border-top-color: #84cc16; }
+.pokemon--tipo-bug:hover { border-color: rgba(132, 204, 22, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(132, 204, 22, 0.28); }
+
+.pokemon--tipo-rock     { border-top-color: #a8a29e; }
+.pokemon--tipo-rock:hover { border-color: rgba(168, 162, 158, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(168, 162, 158, 0.28); }
+
+.pokemon--tipo-normal   { border-top-color: #94a3b8; }
+.pokemon--tipo-normal:hover { border-color: rgba(148, 163, 184, 0.55); box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 28px rgba(148, 163, 184, 0.28); }
 
 /* ==========================================================================
    VISTA LISTA HORIZONTAL (RESPONSIVE & CLEAN)
@@ -764,107 +850,445 @@ body {
 }
 
 /* ==========================================================================
-   VENTANA MODAL - ESCÁNER HOLOGRÁFICO POKÉDEX
+   VENTANA MODAL - ESCÁNER BIOMÉTRICO Y TELEMETRÍA POKÉDEX
    ========================================================================== */
 .modal {
   border: 0;
-  border-radius: 1.5rem;
+  border-radius: 1.6rem;
   padding: 0;
-  max-width: 520px;
-  width: 90%;
+  max-width: 580px;
+  width: 94%;
   background: transparent;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.92);
+  outline: none;
 }
 
 .modal::backdrop {
-  background: rgba(4, 7, 14, 0.82);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(3, 7, 18, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: modal-fade-backdrop 0.25s ease;
+}
+
+.modal[open] {
+  animation: modal-zoom-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modal-fade-backdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-zoom-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .modal__contenido {
   position: relative;
-  padding: 2.25rem 2rem;
-  background: linear-gradient(165deg, rgba(15, 23, 42, 0.98) 0%, rgba(7, 11, 20, 0.98) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1.75rem 1.65rem;
+  background: linear-gradient(168deg, #131c31 0%, #080d19 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.16);
+  border-top: 5px solid #ef4444;
   color: #f1f5f9;
-  border-radius: 1.5rem;
+  border-radius: 1.6rem;
   text-align: center;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    inset 0 1px 2px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.7),
+    0 12px 40px rgba(0, 0, 0, 0.8);
 }
 
+/* Scrollbar estilizada para el modal */
+.modal__contenido::-webkit-scrollbar {
+  width: 6px;
+}
+.modal__contenido::-webkit-scrollbar-track {
+  background: rgba(8, 13, 25, 0.8);
+  border-radius: 999px;
+}
+.modal__contenido::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.35);
+  border-radius: 999px;
+}
+.modal__contenido::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.65);
+}
+
+/* Botón cerrar flotante con halo */
 .modal__btn-cerrar {
   position: absolute;
-  top: 1.15rem;
-  right: 1.15rem;
-  background: rgba(51, 65, 85, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  font-size: 1.4rem;
-  width: 2.4rem;
-  height: 2.4rem;
+  top: 1rem;
+  right: 1.1rem;
+  z-index: 10;
+  background: rgba(30, 41, 59, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 1.35rem;
+  width: 2.3rem;
+  height: 2.3rem;
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #cbd5e1;
-  transition: all 0.2s ease;
+  transition: all 0.22s ease;
+  line-height: 1;
 }
 
 .modal__btn-cerrar:hover {
   background: #dc2626;
+  border-color: #ef4444;
   color: #ffffff;
-  transform: rotate(90deg);
+  transform: rotate(90deg) scale(1.08);
+  box-shadow: 0 0 14px rgba(239, 68, 68, 0.7);
 }
 
-.modal__plataforma-imagen {
-  width: 210px;
-  height: 210px;
-  margin: 0 auto;
+/* Barra superior de telemetría HUD */
+.modal__telemetria-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.6rem;
+  background: rgba(5, 8, 17, 0.7);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+  border-radius: 0.6rem;
+  margin-bottom: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
 }
 
-.modal__imagen {
-  width: 190px;
-  height: 190px;
-  image-rendering: pixelated;
+.modal__telemetria-indicador {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #38bdf8;
+  font-weight: 700;
+  letter-spacing: 0.08em;
 }
 
-/* Fila de 3 cajas de datos físicos */
-.modal__datos {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.modal__led-estado {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: pulso-led-telemetria 2s infinite ease-in-out;
+}
+
+@keyframes pulso-led-telemetria {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+.modal__chip-gen {
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.15rem 0.45rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.35rem;
+}
+
+/* Cabecera de navegación entre especies (◀ Anterior / Identidad / Siguiente ▶) */
+.modal__nav-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
-  margin: 1.35rem 0 1rem 0;
+  margin-bottom: 1.15rem;
 }
 
-.modal__dato-caja {
-  background: rgba(9, 13, 22, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 0.75rem;
-  padding: 0.65rem 0.5rem;
+.modal__btn-nav {
+  padding: 0.45rem 0.75rem;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 0.65rem;
+  color: #94a3b8;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.modal__btn-nav:hover:not(:disabled) {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: #38bdf8;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.35);
+}
+
+.modal__btn-nav:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+.modal__nav-identidad {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  min-width: 0;
+}
+
+.modal__numero-dex {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 0.1em;
+}
+
+.modal__nombre {
+  margin: 0;
+  font-size: 1.65rem;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+  text-transform: capitalize;
+  color: #ffffff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+  line-height: 1.15;
+}
+
+.modal__tipos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.25rem;
+}
+
+/* ==========================================================================
+   VISOR BIOMÉTRICO HOLOGRÁFICO (REACCIÓN ELEMENTAL SEGÚN TIPO)
+   ========================================================================== */
+.modal__visor {
+  position: relative;
+  background: radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.15) 0%, #060913 75%);
+  border: 1.5px solid rgba(56, 189, 248, 0.3);
+  border-radius: 1.25rem;
+  padding: 1rem 1rem 0.85rem 1rem;
+  box-shadow: 
+    inset 0 2px 10px rgba(0, 0, 0, 0.9), 
+    0 8px 24px rgba(0, 0, 0, 0.6);
+  margin-bottom: 1.25rem;
+  transition: all 0.35s ease;
+  overflow: hidden;
+}
+
+/* Efectos reactivos al tipo primario en el visor */
+.modal__visor--fire     { background: radial-gradient(circle at 50% 40%, rgba(249, 115, 22, 0.2) 0%, #0a060d 75%); border-color: rgba(249, 115, 22, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(249, 115, 22, 0.25); }
+.modal__visor--water    { background: radial-gradient(circle at 50% 40%, rgba(14, 165, 233, 0.2) 0%, #050914 75%); border-color: rgba(14, 165, 233, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(14, 165, 233, 0.25); }
+.modal__visor--grass    { background: radial-gradient(circle at 50% 40%, rgba(16, 185, 129, 0.2) 0%, #050e0a 75%); border-color: rgba(16, 185, 129, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(16, 185, 129, 0.25); }
+.modal__visor--electric { background: radial-gradient(circle at 50% 40%, rgba(250, 204, 21, 0.2) 0%, #0e0c05 75%); border-color: rgba(250, 204, 21, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(250, 204, 21, 0.25); }
+.modal__visor--poison   { background: radial-gradient(circle at 50% 40%, rgba(168, 85, 247, 0.2) 0%, #0b0512 75%); border-color: rgba(168, 85, 247, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(168, 85, 247, 0.25); }
+.modal__visor--psychic  { background: radial-gradient(circle at 50% 40%, rgba(244, 63, 94, 0.2) 0%, #120509 75%); border-color: rgba(244, 63, 94, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(244, 63, 94, 0.25); }
+.modal__visor--ghost    { background: radial-gradient(circle at 50% 40%, rgba(139, 92, 246, 0.2) 0%, #090514 75%); border-color: rgba(139, 92, 246, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(139, 92, 246, 0.25); }
+.modal__visor--dragon   { background: radial-gradient(circle at 50% 40%, rgba(99, 102, 241, 0.2) 0%, #070614 75%); border-color: rgba(99, 102, 241, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(99, 102, 241, 0.25); }
+.modal__visor--ice      { background: radial-gradient(circle at 50% 40%, rgba(56, 189, 248, 0.22) 0%, #050b14 75%); border-color: rgba(56, 189, 248, 0.5); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(56, 189, 248, 0.25); }
+.modal__visor--ground   { background: radial-gradient(circle at 50% 40%, rgba(217, 119, 6, 0.2) 0%, #100a04 75%); border-color: rgba(217, 119, 6, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(217, 119, 6, 0.25); }
+.modal__visor--bug      { background: radial-gradient(circle at 50% 40%, rgba(132, 204, 22, 0.2) 0%, #090e04 75%); border-color: rgba(132, 204, 22, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(132, 204, 22, 0.25); }
+.modal__visor--fighting { background: radial-gradient(circle at 50% 40%, rgba(220, 38, 38, 0.2) 0%, #110505 75%); border-color: rgba(220, 38, 38, 0.45); box-shadow: inset 0 2px 10px rgba(0,0,0,0.9), 0 0 25px rgba(220, 38, 38, 0.25); }
+
+.modal__visor-marco {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Luces de esquinas biométricas */
+.modal__visor-luz {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+}
+.modal__visor-luz--tl { top: -4px; left: -2px; border-right: 0; border-bottom: 0; }
+.modal__visor-luz--tr { top: -4px; right: -2px; border-left: 0; border-bottom: 0; }
+.modal__visor-luz--bl { bottom: -4px; left: -2px; border-right: 0; border-top: 0; }
+.modal__visor-luz--br { bottom: -4px; right: -2px; border-left: 0; border-top: 0; }
+
+.modal__visor-escenario {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+}
+
+.modal__visor-grid {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.03) 0px,
+    rgba(255, 255, 255, 0.03) 1px,
+    transparent 1px,
+    transparent 4px
+  );
+  pointer-events: none;
+}
+
+.modal__imagen {
+  width: 185px;
+  height: 185px;
+  image-rendering: pixelated;
+  z-index: 2;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+  animation: modal-flotar 3s ease-in-out infinite;
+}
+
+@keyframes modal-flotar {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.modal__imagen--shiny {
+  filter: drop-shadow(0 0 16px rgba(250, 204, 21, 0.65));
+}
+
+.modal__imagen--destello {
+  animation: modal-destello-shiny 0.6s ease-out;
+}
+
+@keyframes modal-destello-shiny {
+  0% { transform: scale(0.85) rotate(-5deg); filter: brightness(2) drop-shadow(0 0 25px #facc15); }
+  50% { transform: scale(1.15) rotate(3deg); filter: brightness(1.6) drop-shadow(0 0 35px #facc15); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+.modal__visor-sombra {
+  width: 110px;
+  height: 14px;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, transparent 75%);
+  border-radius: 50%;
+  margin-top: -10px;
+  z-index: 1;
+}
+
+/* Herramientas de interacción del visor (Shiny, Audio, Girar) */
+.modal__herramientas {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.85rem;
+  position: relative;
+  z-index: 3;
+}
+
+.modal__herramienta-btn {
+  padding: 0.42rem 0.85rem;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  color: #cbd5e1;
+  font-family: var(--font-main);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.modal__herramienta-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.modal__herramienta-btn.activo {
+  background: linear-gradient(135deg, #eab308, #ca8a04);
+  border-color: #facc15;
+  color: #0f172a;
+  box-shadow: 0 0 12px rgba(250, 204, 21, 0.55);
+}
+
+/* Estado de onda sonora activa para el botón de rugido */
+#modal-btn-audio.activo {
+  background: linear-gradient(135deg, #0ea5e9, #0284c7);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.65);
+}
+
+/* ==========================================================================
+   MATRIZ DE TELEMETRÍA FÍSICA Y COMBATE (4 MÉTRICAS)
+   ========================================================================== */
+.modal__datos {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin: 1.15rem 0;
+}
+
+.modal__dato-caja {
+  background: #060913;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  padding: 0.6rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.75);
+}
+
+.modal__dato-caja--destacada {
+  border-color: rgba(56, 189, 248, 0.3);
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.08) 0%, #060913 100%);
 }
 
 .modal__dato-titulo {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   color: #64748b;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  font-family: var(--font-mono);
 }
 
 .modal__dato-valor {
-  font-size: 1rem;
+  font-size: 0.95rem;
   color: #ffffff;
   font-weight: 800;
+  font-family: var(--font-mono);
 }
 
-/* Badges de habilidades */
+.modal__dato-caja--destacada .modal__dato-valor {
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.5);
+}
+
+/* ==========================================================================
+   HABILIDADES REGISTRADAS
+   ========================================================================== */
 .modal__habilidades-bloque {
-  margin-bottom: 1.35rem;
+  margin-bottom: 1.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -872,11 +1296,12 @@ body {
 }
 
 .modal__habilidades-titulo {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #64748b;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  font-family: var(--font-mono);
 }
 
 .modal__habilidades-lista {
@@ -887,37 +1312,69 @@ body {
 }
 
 .modal__habilidad-badge {
-  padding: 0.35rem 0.95rem;
+  padding: 0.35rem 0.85rem;
   background: rgba(30, 41, 59, 0.85);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: #e2e8f0;
   text-transform: capitalize;
   font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-/* Panel de estadísticas base con barras temáticas */
+.modal__habilidad-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #38bdf8;
+  box-shadow: 0 0 6px #38bdf8;
+}
+
+/* ==========================================================================
+   PANEL DE ESTADÍSTICAS BASE CON MEDIDORES Y BST
+   ========================================================================== */
 .modal__stats {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
   text-align: left;
-  background: rgba(9, 13, 22, 0.85);
-  padding: 1.25rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #060913;
+  padding: 1.2rem;
+  border-radius: 1.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.modal__stats-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.35rem;
 }
 
 .modal__stats-titulo {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 0.85rem;
   color: #e2e8f0;
-  text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   font-weight: 800;
+  font-family: var(--font-mono);
+}
+
+.modal__stats-badge-rango {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 999px;
+  color: #38bdf8;
 }
 
 .modal__stat-fila {
@@ -930,28 +1387,41 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 700;
 }
 
 .modal__stat-nombre {
   color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.modal__stat-sigla {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #64748b;
+  padding: 0.1rem 0.35rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 0.3rem;
 }
 
 .modal__stat-valor {
   color: #ffffff;
   font-family: var(--font-mono);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 800;
 }
 
 .modal__stat-barra-fondo {
   width: 100%;
-  height: 9px;
-  background: rgba(51, 65, 85, 0.5);
+  height: 8px;
+  background: rgba(30, 41, 59, 0.75);
   border-radius: 999px;
   overflow: hidden;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .modal__stat-barra-relleno {
@@ -960,12 +1430,59 @@ body {
   transition: width 0.75s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.modal__stat-barra--hp         { background: linear-gradient(90deg, #10b981, #34d399); box-shadow: 0 0 8px rgba(52, 211, 153, 0.5); }
-.modal__stat-barra--attack     { background: linear-gradient(90deg, #f97316, #fb923c); box-shadow: 0 0 8px rgba(251, 146, 60, 0.5); }
-.modal__stat-barra--defense    { background: linear-gradient(90deg, #eab308, #facc15); box-shadow: 0 0 8px rgba(250, 204, 21, 0.5); }
-.modal__stat-barra--sp-attack { background: linear-gradient(90deg, #0284c7, #38bdf8); box-shadow: 0 0 8px rgba(56, 189, 248, 0.5); }
-.modal__stat-barra--sp-defense { background: linear-gradient(90deg, #6366f1, #818cf8); box-shadow: 0 0 8px rgba(129, 140, 248, 0.5); }
-.modal__stat-barra--speed      { background: linear-gradient(90deg, #ec4899, #f472b6); box-shadow: 0 0 8px rgba(244, 114, 182, 0.5); }
+.modal__stat-barra--hp         { background: linear-gradient(90deg, #10b981, #34d399); box-shadow: 0 0 8px rgba(52, 211, 153, 0.6); }
+.modal__stat-barra--attack     { background: linear-gradient(90deg, #f97316, #fb923c); box-shadow: 0 0 8px rgba(251, 146, 60, 0.6); }
+.modal__stat-barra--defense    { background: linear-gradient(90deg, #eab308, #facc15); box-shadow: 0 0 8px rgba(250, 204, 21, 0.6); }
+.modal__stat-barra--sp-attack { background: linear-gradient(90deg, #0284c7, #38bdf8); box-shadow: 0 0 8px rgba(56, 189, 248, 0.6); }
+.modal__stat-barra--sp-defense { background: linear-gradient(90deg, #6366f1, #818cf8); box-shadow: 0 0 8px rgba(129, 140, 248, 0.6); }
+.modal__stat-barra--speed      { background: linear-gradient(90deg, #ec4899, #f472b6); box-shadow: 0 0 8px rgba(244, 114, 182, 0.6); }
+
+/* ==========================================================================
+   GUÍA DE ATAJOS DE TECLADO EN EL PIE DEL MODAL
+   ========================================================================== */
+.modal__teclado-guia {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1.15rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.modal__teclado-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.modal__teclado-item kbd {
+  display: inline-block;
+  padding: 0.12rem 0.4rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom-width: 2px;
+  border-radius: 0.3rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+@media (max-width: 540px) {
+  .modal__contenido {
+    padding: 1.35rem 1rem;
+  }
+  .modal__datos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .modal__nombre {
+    font-size: 1.35rem;
+  }
+}
 
 /* ==========================================================================
    ANIMACIÓN CINEMATOGRÁFICA POKÉMON (EVENTO / APERTURA DE POKÉBALL)
