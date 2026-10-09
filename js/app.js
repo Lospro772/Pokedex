@@ -1,3 +1,6 @@
+// ==========================================================================
+// REFERENCIAS A ELEMENTOS DEL DOM
+// ==========================================================================
 const formulario = document.querySelector("#formulario-busqueda");
 const inputBusqueda = document.querySelector("#busqueda");
 const mensaje = document.querySelector("#mensaje");
@@ -14,12 +17,14 @@ const btnVistaLista = document.querySelector("#btn-vista-lista");
 const btnFiltroFavoritos = document.querySelector("#btn-filtro-favoritos");
 const contadorFavoritos = document.querySelector("#contador-favoritos");
 
-// Estado para filtrar solo favoritos
-let soloFavoritosActivo = false;
 
-// Gestión de favoritos con localStorage (Ampliación Voluntaria 10)
+// ==========================================================================
+// GESTIÓN DE FAVORITOS (localStorage)
+// ==========================================================================
+let soloFavoritosActivo = false;
 const CLAVE_FAVORITOS = "pokedex_favoritos";
 
+// Lee los favoritos almacenados en localStorage
 const obtenerFavoritos = () => {
   try {
     const datos = localStorage.getItem(CLAVE_FAVORITOS);
@@ -30,6 +35,7 @@ const obtenerFavoritos = () => {
   }
 };
 
+// Guarda el array de favoritos en localStorage
 const guardarFavoritos = (favoritos) => {
   try {
     localStorage.setItem(CLAVE_FAVORITOS, JSON.stringify(favoritos));
@@ -38,6 +44,7 @@ const guardarFavoritos = (favoritos) => {
   }
 };
 
+// Alterna el estado de favorito de un Pokémon por su ID
 const alternarFavorito = (id) => {
   let favoritos = obtenerFavoritos();
   const idNum = Number(id);
@@ -54,6 +61,7 @@ const alternarFavorito = (id) => {
   return !yaEsFavorito;
 };
 
+// Actualiza el contador numérico de favoritos en la interfaz
 const actualizarContadorFavoritos = () => {
   if (contadorFavoritos) {
     const total = obtenerFavoritos().length;
@@ -62,14 +70,17 @@ const actualizarContadorFavoritos = () => {
 };
 
 
-// Guardaremos los 151 Pokémon aquí para filtrarlos en memoria rápidamente
+// ==========================================================================
+// ESTADO GLOBAL EN MEMORIA Y UTILIDADES
+// ==========================================================================
 let todosLosPokemon = [];
 
+// Formatea el número del Pokémon con ceros a la izquierda (ej. 25 -> "025")
 const formatearId = (id) => {
   return String(id).padStart(3, "0");
 };
 
-// Obtiene todos los tipos distintos de los 151 Pokémon y rellena el <select>
+// Obtiene los tipos únicos de los Pokémon cargados y puebla el elemento <select>
 const poblarSelectorTipos = () => {
   const tiposUnicos = new Set();
   todosLosPokemon.forEach((pokemon) => {
@@ -88,7 +99,7 @@ const poblarSelectorTipos = () => {
 };
 
 // ==========================================================================
-// EFECTOS DE SONIDO RETRO POKÉMON (WEB AUDIO API NATIVA - SIN LIBRERÍAS)
+// EFECTOS DE SONIDO RETRO (Web Audio API)
 // ==========================================================================
 class SonidosPokemon {
   constructor() {
@@ -145,7 +156,6 @@ class SonidosPokemon {
   tocarFanfarria() {
     if (this.silenciado || !this.ctx) return;
     try {
-      // Arpegio retro: C5, E5, G5, C6
       const notas = [523.25, 659.25, 783.99, 1046.5];
       const ahora = this.ctx.currentTime;
       notas.forEach((freq, idx) => {
@@ -162,11 +172,53 @@ class SonidosPokemon {
       });
     } catch (_) {}
   }
+
+  // Tono de escaneo tecnológico al abrir el visor de detalles
+  tocarAbrirModal() {
+    if (this.silenciado || !this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1046.5, this.ctx.currentTime + 0.16);
+      gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.19);
+    } catch (_) {}
+  }
+
+  // Tintineo brillante de estrellas al alternar modo Variocolor (Shiny)
+  tocarShiny() {
+    if (this.silenciado || !this.ctx) return;
+    try {
+      const notas = [1318.51, 1760.0, 2093.0];
+      const ahora = this.ctx.currentTime;
+      notas.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, ahora + idx * 0.06);
+        gain.gain.setValueAtTime(0.09, ahora + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, ahora + idx * 0.06 + 0.14);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(ahora + idx * 0.06);
+        osc.stop(ahora + idx * 0.06 + 0.15);
+      });
+    } catch (_) {}
+  }
 }
 
 const sintetizadorSonidos = new SonidosPokemon();
 
-// Elementos de la animación cinemática estilo Evento Pokémon
+
+// ==========================================================================
+// ELEMENTOS Y CONTROLES DE LA ANIMACIÓN DE INTRODUCCIÓN
+// ==========================================================================
 const introOverlay = document.querySelector("#intro-pokemon");
 const pokeballLoader = document.querySelector("#pokeball-loader");
 const introEstado = document.querySelector("#intro-estado");
@@ -207,7 +259,10 @@ if (btnOmitirIntro) {
   });
 }
 
-// Función para descargar los 151 Pokémon en segundo plano con animación cinemática
+// ==========================================================================
+// CARGA CONCURRENTE DE LOS 151 POKÉMON (Promise.all)
+// ==========================================================================
+// Descarga los datos de los 151 Pokémon en paralelo y los guarda en memoria
 const cargarPokemonsEnMemoria = async () => {
   introOmitida = false;
   sintetizadorSonidos.iniciar();
@@ -238,6 +293,7 @@ const cargarPokemonsEnMemoria = async () => {
     let cargadosContador = 0;
     const promesas = [];
 
+    // Bucle para crear las peticiones concurrentes (Requisito 4.2)
     for (let i = 1; i <= 151; i++) {
       promesas.push(
         fetch(`https://pokeapi.co/api/v2/pokemon/${i}`)
@@ -268,7 +324,10 @@ const cargarPokemonsEnMemoria = async () => {
       introEstado.textContent = "DESCARGANDO Y SINCRONIZANDO 151 ESPECIES...";
     }
 
+    // Esperamos a que terminen TODAS las peticiones simultáneas
     const datosCrudos = await Promise.all(promesas);
+
+    // Mapeamos los datos crudos de la API a instancias limpias de nuestra clase Pokemon
     todosLosPokemon = datosCrudos.map((dato) => new Pokemon(dato));
     poblarSelectorTipos();
 
@@ -409,7 +468,10 @@ if (btnVerIntro) {
   btnVerIntro.addEventListener("click", reproducirIntroCinematica);
 }
 
-// Genera el HTML de una tarjeta con sprite trasero inicial y botón de detalles
+// ==========================================================================
+// RENDERIZADO DE TARJETA HTML (crearTarjetaHTML)
+// ==========================================================================
+// Genera el código HTML para representar la tarjeta de un Pokémon
 const crearTarjetaHTML = (pokemon) => {
   const tiposHTML = pokemon.tipos
     .map((tipo) => `<span class="tipo tipo--${tipo}">${tipo}</span>`)
@@ -421,6 +483,7 @@ const crearTarjetaHTML = (pokemon) => {
 
   return `
     <article class="pokemon pokemon--tipo-${tipoPrincipal}">
+      <!-- Botón de favorito con estrella persistente -->
       <button
         class="pokemon__btn-favorito ${esFav ? "activo" : ""}"
         data-id="${pokemon.id}"
@@ -433,6 +496,7 @@ const crearTarjetaHTML = (pokemon) => {
 
       <p class="pokemon__numero">N.º ${formatearId(pokemon.id)}</p>
 
+      <!-- Plataforma del espécimen: empieza de espaldas (Requisito 4.4) -->
       <div class="pokemon__plataforma-imagen">
         <img
           class="pokemon__imagen"
@@ -454,12 +518,17 @@ const crearTarjetaHTML = (pokemon) => {
         ${tiposHTML}
       </div>
 
+      <!-- Botón que activa la ventana modal (Requisito 4.6) -->
       <button class="pokemon__btn-detalles" data-id="${pokemon.id}" type="button">Ver detalles</button>
     </article>
   `;
 };
 
-// Alterna entre espalda y frente al pasar el ratón
+
+// ==========================================================================
+// INTERCAMBIO DE SPRITES EN HOVER (mouseenter / mouseleave)
+// ==========================================================================
+// Alterna el sprite entre la vista frontal y trasera al pasar el ratón
 const activarHoverSprites = () => {
   const tarjetas = document.querySelectorAll(".pokemon");
 
@@ -477,13 +546,17 @@ const activarHoverSprites = () => {
   });
 };
 
-// Función principal de búsqueda en memoria con control de estados y favoritos
+
+// ==========================================================================
+// FILTRADO Y BÚSQUEDA EN MEMORIA (filtrarPokemon)
+// ==========================================================================
+// Filtra la lista de Pokémon en memoria según texto, tipo y favoritos
 const filtrarPokemon = () => {
   const busqueda = inputBusqueda.value.trim().toLowerCase();
   const tipoSeleccionado = selectTipo.value;
   const favoritos = obtenerFavoritos();
 
-  // Si no hay búsqueda, tipo es todos y no está activo soloFavoritos
+  // Caso 1: Sin filtros aplicados -> Mostramos los 151 Pokémon directamente
   if (!busqueda && tipoSeleccionado === "todos" && !soloFavoritosActivo) {
     mensaje.className = "mensaje mensaje--exito";
     mensaje.textContent = "¡Pokédex lista! Puedes buscar por nombre, número o filtrar por tipo.";
@@ -492,7 +565,7 @@ const filtrarPokemon = () => {
     return;
   }
 
-  // Filtramos comprobando todas las condiciones combinadas
+  // Caso 2: Filtrado combinado con .filter()
   const encontrados = todosLosPokemon.filter((p) => {
     const coincideNombre = p.nombre.toLowerCase().includes(busqueda);
     const coincideId = String(p.id) === busqueda || formatearId(p.id) === busqueda;
@@ -503,7 +576,7 @@ const filtrarPokemon = () => {
     return coincideTexto && coincideTipo && coincideFavorito;
   });
 
-  // Estado: Búsqueda sin resultados
+  // Caso 3: Búsqueda sin resultados (Control de errores visual, Requisito 4.7)
   if (encontrados.length === 0) {
     mensaje.className = "mensaje mensaje--aviso";
     if (soloFavoritosActivo && favoritos.length === 0) {
@@ -518,7 +591,7 @@ const filtrarPokemon = () => {
     return;
   }
 
-  // Hay resultados: actualizamos el mensaje y pintamos tarjetas
+  // Caso 4: Hay coincidencias -> Renderizamos las tarjetas resultantes
   mensaje.className = "mensaje";
   mensaje.textContent = soloFavoritosActivo ? `Mostrando ${encontrados.length} Pokémon favorito(s)` : "";
   resultado.innerHTML = encontrados.map(crearTarjetaHTML).join("");
@@ -526,23 +599,25 @@ const filtrarPokemon = () => {
 };
 
 
-// Eventos de búsqueda y filtrado:
-// 1. En tiempo real mientras el usuario escribe
+// ==========================================================================
+// ESCUCHADORES DE EVENTOS DE BÚSQUEDA Y VISTAS
+// ==========================================================================
+// 1. En tiempo real: mientras el usuario teclea en el <input>
 inputBusqueda.addEventListener("input", filtrarPokemon);
 
-// 2. Al cambiar el tipo en el selector
+// 2. Al cambiar la opción en el menú desplegable <select>
 selectTipo.addEventListener("change", filtrarPokemon);
 
-// 3. Al enviar el formulario (pulsar Enter o el botón Buscar)
+// 3. Al pulsar 'Enter' o hacer clic en el botón 'Buscar' del formulario
 formulario.addEventListener("submit", (evento) => {
-  evento.preventDefault();
+  evento.preventDefault(); // Evita que la página se recargue
   filtrarPokemon();
 });
 
-// Iniciar la carga de los 151 Pokémon al pulsar el botón (Requisito 4.1)
+// 4. Iniciar la carga de los 151 Pokémon al pulsar el botón principal
 btnCargar.addEventListener("click", cargarPokemonsEnMemoria);
 
-// Alternar entre vista Cuadrícula y Lista (Ampliación Voluntaria 10)
+// 5. Alternancia de vista (Cuadrícula / Lista)
 btnVistaCuadricula.addEventListener("click", () => {
   resultado.classList.remove("resultado--lista");
   btnVistaCuadricula.classList.add("activo");
@@ -555,7 +630,7 @@ btnVistaLista.addEventListener("click", () => {
   btnVistaCuadricula.classList.remove("activo");
 });
 
-// Alternar filtro de favoritos
+// 6. Botón de alternar filtro de favoritos
 btnFiltroFavoritos.addEventListener("click", () => {
   soloFavoritosActivo = !soloFavoritosActivo;
   btnFiltroFavoritos.classList.toggle("activo", soloFavoritosActivo);
@@ -563,38 +638,109 @@ btnFiltroFavoritos.addEventListener("click", () => {
 });
 
 
-// Muestra la ventana modal con la información ampliada del Pokémon seleccionado
-const abrirDetalles = (id) => {
+// ==========================================================================
+// VENTANA MODAL DE DETALLES (<dialog> & abrirDetalles)
+// ==========================================================================
+// Muestra la ventana modal nativa con información detallada del Pokémon
+let idPokemonModalActual = null;
+let modoShinyModal = false;
+let vistaEspaldaModal = false;
+let reproductorGritoActual = null;
+
+// Determinar sprite a renderizar según el estado actual (frontal, espalda, normal, shiny)
+const obtenerSpriteModal = (pokemon, esShiny, esEspalda) => {
+  if (esShiny) {
+    return esEspalda
+      ? (pokemon.spriteShinyBack || pokemon.spriteShiny || pokemon.spriteBack || pokemon.spriteFront)
+      : (pokemon.spriteShiny || pokemon.spriteFront);
+  }
+  return esEspalda
+    ? (pokemon.spriteBack || pokemon.spriteFront)
+    : pokemon.spriteFront;
+};
+
+// Reproducir el grito/rugido oficial de la especie desde PokéAPI Cries
+const reproducirGritoPokemon = (id) => {
+  sintetizadorSonidos.iniciar();
+  try {
+    if (reproductorGritoActual) {
+      reproductorGritoActual.pause();
+      reproductorGritoActual.currentTime = 0;
+    }
+    const audio = new Audio(`https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`);
+    audio.volume = 0.5;
+    reproductorGritoActual = audio;
+    audio.play().catch(() => {
+      // Fallback sónico en caso de falta de conexión
+      sintetizadorSonidos.tocarClic();
+    });
+  } catch (_) {
+    sintetizadorSonidos.tocarClic();
+  }
+};
+
+// Clasificación de poder según el Base Stat Total (BST)
+const obtenerRangoBST = (total) => {
+  if (total >= 580) return "★ Legendario / Titán";
+  if (total >= 500) return "▲ Nivel Muy Alto";
+  if (total >= 420) return "◆ Avanzado";
+  if (total >= 320) return "● Equilibrado";
+  return "○ Inicial / Base";
+};
+
+// Muestra la ventana modal con la información ampliada y telemetría del Pokémon
+const abrirDetalles = (id, conservarModos = false) => {
   const pokemon = todosLosPokemon.find((p) => p.id === Number(id));
   if (!pokemon) return;
+
+  idPokemonModalActual = pokemon.id;
+  if (!conservarModos) {
+    modoShinyModal = false;
+    vistaEspaldaModal = false;
+  } else {
+    vistaEspaldaModal = false;
+  }
+
+  sintetizadorSonidos.iniciar();
+  sintetizadorSonidos.tocarAbrirModal();
+
+  const tipoPrincipal = pokemon.tipos[0] || "normal";
 
   const tiposHTML = pokemon.tipos
     .map((tipo) => `<span class="tipo tipo--${tipo}">${tipo}</span>`)
     .join("");
 
-  // Formatear habilidades como badges estilizados
+  // Formatear habilidades como chips tecnológicos
   const habilidadesHTML = pokemon.habilidades
-    .map((h) => `<span class="modal__habilidad-badge">${h.replace(/-/g, " ")}</span>`)
+    .map((h) => `<span class="modal__habilidad-badge"><span class="modal__habilidad-dot"></span>${h.replace(/-/g, " ")}</span>`)
     .join("");
 
-  // Configuración de las barras visuales de estadísticas (Ampliación Voluntaria 10)
+  // Cálculo del Total de Estadísticas Base (BST)
+  const totalStats = 
+    pokemon.stats.hp +
+    pokemon.stats.attack +
+    pokemon.stats.defense +
+    pokemon.stats.specialAttack +
+    pokemon.stats.specialDefense +
+    pokemon.stats.speed;
+
+  // Configuración de las barras visuales de estadísticas
   const statsConfig = [
-    { nombre: "PS (HP)", valor: pokemon.stats.hp, clase: "hp" },
-    { nombre: "Ataque", valor: pokemon.stats.attack, clase: "attack" },
-    { nombre: "Defensa", valor: pokemon.stats.defense, clase: "defense" },
-    { nombre: "Atq. Especial", valor: pokemon.stats.specialAttack, clase: "sp-attack" },
-    { nombre: "Def. Especial", valor: pokemon.stats.specialDefense, clase: "sp-defense" },
-    { nombre: "Velocidad", valor: pokemon.stats.speed, clase: "speed" },
+    { sigla: "HP", nombre: "PS (Vida)", valor: pokemon.stats.hp, clase: "hp" },
+    { sigla: "ATK", nombre: "Ataque", valor: pokemon.stats.attack, clase: "attack" },
+    { sigla: "DEF", nombre: "Defensa", valor: pokemon.stats.defense, clase: "defense" },
+    { sigla: "SPA", nombre: "Atq. Especial", valor: pokemon.stats.specialAttack, clase: "sp-attack" },
+    { sigla: "SPD", nombre: "Def. Especial", valor: pokemon.stats.specialDefense, clase: "sp-defense" },
+    { sigla: "SPE", nombre: "Velocidad", valor: pokemon.stats.speed, clase: "speed" },
   ];
 
   const statsHTML = statsConfig
     .map((s) => {
-      // Calculamos el porcentaje sobre 180 (un máximo representativo de la 1ª generación)
       const porcentaje = Math.min(100, Math.round((s.valor / 180) * 100));
       return `
         <div class="modal__stat-fila">
           <div class="modal__stat-info">
-            <span class="modal__stat-nombre">${s.nombre}</span>
+            <span class="modal__stat-nombre"><span class="modal__stat-sigla">${s.sigla}</span> ${s.nombre}</span>
             <span class="modal__stat-valor">${s.valor}</span>
           </div>
           <div class="modal__stat-barra-fondo">
@@ -605,15 +751,100 @@ const abrirDetalles = (id) => {
     })
     .join("");
 
-  modalCuerpo.innerHTML = `
-    <p class="pokemon__numero">N.º ${formatearId(pokemon.id)}</p>
-    <div class="modal__plataforma-imagen">
-      <img class="modal__imagen" src="${pokemon.spriteFront}" alt="Imagen de ${pokemon.nombre}">
-    </div>
-    <h2 class="pokemon__nombre">${pokemon.nombre}</h2>
-    
-    <div class="pokemon__tipos">${tiposHTML}</div>
+  const urlSprite = obtenerSpriteModal(pokemon, modoShinyModal, vistaEspaldaModal);
+  const tieneAnterior = pokemon.id > 1;
+  const tieneSiguiente = pokemon.id < 151;
 
+  modalCuerpo.innerHTML = `
+    <!-- Barra superior de telemetría HUD -->
+    <div class="modal__telemetria-barra">
+      <div class="modal__telemetria-indicador">
+        <span class="modal__led-estado"></span>
+        <span class="modal__telemetria-texto">ESCANEO BIOMÉTRICO KANTO</span>
+      </div>
+      <span class="modal__chip-gen">GEN-1 • KANTO</span>
+    </div>
+
+    <!-- Navegación entre Pokémon (◀ Anterior / Especie / Siguiente ▶) -->
+    <div class="modal__nav-cabecera">
+      <button 
+        type="button" 
+        class="modal__btn-nav modal__btn-nav--anterior" 
+        data-nav-id="${pokemon.id - 1}" 
+        ${!tieneAnterior ? "disabled" : ""}
+        title="${tieneAnterior ? `Ir a #${formatearId(pokemon.id - 1)} (Flecha Izquierda)` : 'Primer espécimen'}"
+        aria-label="Pokémon anterior">
+        ◀ #${formatearId(Math.max(1, pokemon.id - 1))}
+      </button>
+
+      <div class="modal__nav-identidad">
+        <span class="modal__numero-dex">N.º ${formatearId(pokemon.id)}</span>
+        <h2 class="modal__nombre">${pokemon.nombre}</h2>
+        <div class="modal__tipos">${tiposHTML}</div>
+      </div>
+
+      <button 
+        type="button" 
+        class="modal__btn-nav modal__btn-nav--siguiente" 
+        data-nav-id="${pokemon.id + 1}" 
+        ${!tieneSiguiente ? "disabled" : ""}
+        title="${tieneSiguiente ? `Ir a #${formatearId(pokemon.id + 1)} (Flecha Derecha)` : 'Último espécimen'}"
+        aria-label="Pokémon siguiente">
+        #${formatearId(Math.min(151, pokemon.id + 1))} ▶
+      </button>
+    </div>
+
+    <!-- Visor holográfico reactivo al tipo del Pokémon -->
+    <div class="modal__visor modal__visor--${tipoPrincipal}">
+      <div class="modal__visor-marco">
+        <div class="modal__visor-luz modal__visor-luz--tl"></div>
+        <div class="modal__visor-luz modal__visor-luz--tr"></div>
+        <div class="modal__visor-luz modal__visor-luz--bl"></div>
+        <div class="modal__visor-luz modal__visor-luz--br"></div>
+        
+        <div class="modal__visor-escenario">
+          <div class="modal__visor-grid"></div>
+          <img 
+            id="modal-sprite-img" 
+            class="modal__imagen ${modoShinyModal ? 'modal__imagen--shiny' : ''}" 
+            src="${urlSprite}" 
+            alt="Espécimen ${pokemon.nombre}">
+          <div class="modal__visor-sombra"></div>
+        </div>
+      </div>
+
+      <!-- Barra de herramientas del visor (Shiny, Audio, Girar) -->
+      <div class="modal__herramientas">
+        <button 
+          id="modal-btn-shiny" 
+          type="button" 
+          class="modal__herramienta-btn ${modoShinyModal ? 'activo' : ''}" 
+          title="Alternar apariencia Variocolor (Shiny) [Tecla S]">
+          <span class="modal__herramienta-icono">✨</span>
+          <span class="modal__herramienta-texto">${modoShinyModal ? 'Variocolor' : 'Normal'}</span>
+        </button>
+
+        <button 
+          id="modal-btn-audio" 
+          type="button" 
+          class="modal__herramienta-btn" 
+          title="Reproducir rugido oficial del espécimen [Tecla C]">
+          <span class="modal__herramienta-icono">🔊</span>
+          <span class="modal__herramienta-texto">Rugido</span>
+        </button>
+
+        <button 
+          id="modal-btn-rotar" 
+          type="button" 
+          class="modal__herramienta-btn ${vistaEspaldaModal ? 'activo' : ''}" 
+          title="Girar perspectiva (Frente / Espalda)">
+          <span class="modal__herramienta-icono">🔄</span>
+          <span class="modal__herramienta-texto">${vistaEspaldaModal ? 'Espalda' : 'Frente'}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Matriz de telemetría física y combate (4 métricas) -->
     <div class="modal__datos">
       <div class="modal__dato-caja">
         <span class="modal__dato-titulo">Altura</span>
@@ -625,25 +856,141 @@ const abrirDetalles = (id) => {
       </div>
       <div class="modal__dato-caja">
         <span class="modal__dato-titulo">Exp. Base</span>
-        <span class="modal__dato-valor">${pokemon.experiencia} exp</span>
+        <span class="modal__dato-valor">${pokemon.experiencia || '—'} EXP</span>
+      </div>
+      <div class="modal__dato-caja modal__dato-caja--destacada">
+        <span class="modal__dato-titulo">Total BST</span>
+        <span class="modal__dato-valor">${totalStats} PTS</span>
       </div>
     </div>
 
+    <!-- Habilidades pasivas / activas -->
     <div class="modal__habilidades-bloque">
-      <span class="modal__habilidades-titulo">Habilidades</span>
+      <span class="modal__habilidades-titulo">Habilidades Registradas</span>
       <div class="modal__habilidades-lista">
         ${habilidadesHTML}
       </div>
     </div>
 
+    <!-- Panel de estadísticas base con BST y clasificación -->
     <div class="modal__stats">
-      <h3 class="modal__stats-titulo">Estadísticas base</h3>
+      <div class="modal__stats-cabecera">
+        <h3 class="modal__stats-titulo">Estadísticas Base</h3>
+        <span class="modal__stats-badge-rango">${obtenerRangoBST(totalStats)}</span>
+      </div>
       ${statsHTML}
+    </div>
+
+    <!-- Guía rápida de atajos de teclado -->
+    <div class="modal__teclado-guia">
+      <span class="modal__teclado-item"><kbd>◀</kbd> <kbd>▶</kbd> Navegar</span>
+      <span class="modal__teclado-item"><kbd>S</kbd> Variocolor</span>
+      <span class="modal__teclado-item"><kbd>C</kbd> Rugido</span>
+      <span class="modal__teclado-item"><kbd>Esc</kbd> Cerrar</span>
     </div>
   `;
 
-  modal.showModal();
+  if (!modal.open) {
+    modal.showModal();
+  }
 };
+
+// ==========================================================================
+// DELEGACIÓN DE EVENTOS (modalCuerpo & resultado)
+// ==========================================================================
+// 1. Delegación de eventos dentro del modal (Navegación, Shiny, Audio y Rotación)
+modalCuerpo.addEventListener("click", (e) => {
+  if (!idPokemonModalActual) return;
+  const pokemonActual = todosLosPokemon.find((p) => p.id === idPokemonModalActual);
+  if (!pokemonActual) return;
+
+  // A. Clic en botón de navegación anterior / siguiente
+  const btnNav = e.target.closest(".modal__btn-nav");
+  if (btnNav && !btnNav.disabled) {
+    const navId = Number(btnNav.dataset.navId);
+    if (navId >= 1 && navId <= 151) {
+      abrirDetalles(navId, true); // Conserva el modo shiny si estaba activo
+    }
+    return;
+  }
+
+  // B. Clic en botón de Shiny (Variocolor)
+  const btnShiny = e.target.closest("#modal-btn-shiny");
+  if (btnShiny) {
+    modoShinyModal = !modoShinyModal;
+    const img = document.querySelector("#modal-sprite-img");
+    if (img) {
+      img.src = obtenerSpriteModal(pokemonActual, modoShinyModal, vistaEspaldaModal);
+      img.classList.toggle("modal__imagen--shiny", modoShinyModal);
+      img.classList.remove("modal__imagen--destello");
+      void img.offsetWidth; // Forzar reflujo para reiniciar animación de destello
+      img.classList.add("modal__imagen--destello");
+    }
+    btnShiny.classList.toggle("activo", modoShinyModal);
+    const txt = btnShiny.querySelector(".modal__herramienta-texto");
+    if (txt) txt.textContent = modoShinyModal ? "Variocolor" : "Normal";
+    sintetizadorSonidos.tocarShiny();
+    return;
+  }
+
+  // C. Clic en botón de Audio (Rugido oficial de PokéAPI)
+  const btnAudio = e.target.closest("#modal-btn-audio");
+  if (btnAudio) {
+    reproducirGritoPokemon(pokemonActual.id);
+    btnAudio.classList.add("activo");
+    setTimeout(() => btnAudio.classList.remove("activo"), 900);
+    return;
+  }
+
+  // D. Clic en botón de Rotar (Frente / Espalda)
+  const btnRotar = e.target.closest("#modal-btn-rotar");
+  if (btnRotar) {
+    vistaEspaldaModal = !vistaEspaldaModal;
+    const img = document.querySelector("#modal-sprite-img");
+    if (img) {
+      img.src = obtenerSpriteModal(pokemonActual, modoShinyModal, vistaEspaldaModal);
+    }
+    btnRotar.classList.toggle("activo", vistaEspaldaModal);
+    const txt = btnRotar.querySelector(".modal__herramienta-texto");
+    if (txt) txt.textContent = vistaEspaldaModal ? "Espalda" : "Frente";
+    sintetizadorSonidos.tocarClic();
+    return;
+  }
+});
+
+// Soporte para atajos de teclado mientras el modal está abierto
+window.addEventListener("keydown", (e) => {
+  if (!modal.open || !idPokemonModalActual) return;
+
+  if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    if (idPokemonModalActual > 1) {
+      abrirDetalles(idPokemonModalActual - 1, true);
+    }
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    if (idPokemonModalActual < 151) {
+      abrirDetalles(idPokemonModalActual + 1, true);
+    }
+  } else if (e.key === "s" || e.key === "S") {
+    e.preventDefault();
+    const btnShiny = document.querySelector("#modal-btn-shiny");
+    if (btnShiny) btnShiny.click();
+  } else if (e.key === "c" || e.key === "C") {
+    e.preventDefault();
+    const btnAudio = document.querySelector("#modal-btn-audio");
+    if (btnAudio) btnAudio.click();
+  }
+});
+
+// Detener audio al cerrar el modal
+modal.addEventListener("close", () => {
+  if (reproductorGritoActual) {
+    reproductorGritoActual.pause();
+    reproductorGritoActual = null;
+  }
+  idPokemonModalActual = null;
+});
 
 // Cerrar el modal al pulsar la 'X' o al hacer clic fuera del cuadro
 btnCerrarModal.addEventListener("click", () => modal.close());
@@ -651,9 +998,9 @@ modal.addEventListener("click", (e) => {
   if (e.target === modal) modal.close();
 });
 
-// Escuchar clics en botones de tarjetas mediante delegación de eventos
+// 2. Delegación de eventos en las tarjetas de la cuadrícula de resultados
 resultado.addEventListener("click", (evento) => {
-  // Manejo de clic en botón de favoritos
+  // A. Clic en botón de favorito (Estrella)
   const btnFav = evento.target.closest(".pokemon__btn-favorito");
   if (btnFav) {
     const id = btnFav.dataset.id;
@@ -671,7 +1018,7 @@ resultado.addEventListener("click", (evento) => {
     return;
   }
 
-  // Manejo de clic en botón de detalles
+  // B. Clic en botón de detalles (Abre el modal)
   const boton = evento.target.closest(".pokemon__btn-detalles");
   if (boton) {
     const id = boton.dataset.id;
