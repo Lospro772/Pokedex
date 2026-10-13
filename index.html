@@ -92,9 +92,10 @@
     <p class="introduccion">
       Base de datos oficial de la 1.ª Generación. Introduce un nombre, identificador (#) o filtra por tipo elemental.
     </p>
-    <!-- Botón de carga inicial (Requisito 4.1) -->
+    <!-- Botón de carga inicial (Requisito 4.1) y Botón de Pokémon Aleatorio -->
     <div class="acciones-iniciales">
       <button id="btn-cargar" class="btn-cargar" type="button">Cargar los 151 Pokémon</button>
+      <button id="btn-pokemon-aleatorio" class="btn-aleatorio" type="button">Pokémon aleatorio</button>
     </div>
     <form id="formulario-busqueda" class="buscador">
       <label for="busqueda">Nombre o número</label>
@@ -108,6 +109,7 @@
       </div>
     </form>
     <p id="mensaje" class="mensaje" aria-live="polite">Pulsa "Cargar los 151 Pokémon" para iniciar la Pokédex.</p>
+    <p id="contador-resultados" class="contador-resultados" aria-live="polite" style="display: none;"></p>
     <!-- Controles de vista y favoritos (Ampliaciones Voluntarias 10) -->
     <div id="vista-controles" class="vista-controles" style="display: none;">
       <button id="btn-filtro-favoritos" class="btn-favoritos" type="button" title="Filtrar por favoritos">
@@ -118,6 +120,9 @@
       <button id="btn-vista-lista" class="btn-vista" type="button" title="Vista Lista">☰ Lista</button>
       <button id="btn-ver-intro" class="btn-vista" type="button" title="Revivir animación cinematográfica estilo Evento Pokémon">⚡ Ver Intro</button>
     </div>
+    <!-- Contenedor del Pokémon Aleatorio (Fuera de los 151 originales) -->
+    <section id="contenedor-aleatorio" class="contenedor-aleatorio" style="display: none;" aria-live="polite"></section>
+
     <section id="resultado" class="resultado"></section>
 
 
