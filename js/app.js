@@ -336,6 +336,7 @@ const cargarPokemonsEnMemoria = async () => {
 
     // Habilitamos controles para el usuario
     btnCargar.style.display = "none";
+    if (btnAleatorio) btnAleatorio.style.display = "inline-block";
     contenedorVistas.style.display = "flex";
     actualizarContadorFavoritos();
     inputBusqueda.disabled = false;
@@ -389,6 +390,7 @@ const cargarPokemonsEnMemoria = async () => {
 
     // Estado 3: Error de comunicación con PokéAPI
     btnCargar.disabled = false;
+    if (btnAleatorio) btnAleatorio.style.display = "none";
     inputBusqueda.disabled = true;
     selectTipo.disabled = true;
     botonBuscar.disabled = true;
@@ -738,6 +740,7 @@ const mostrarPokemonAleatorio = (pokemon) => {
 
 // Consulta /api/v2/pokemon/{id} con id aleatorio sin tocar el array de 151
 const consultarPokemonAleatorio = async (idForzado = null) => {
+  if (todosLosPokemon.length === 0) return;
   const id = idForzado || generarIdAleatorio();
   ultimoIdAleatorioIntentado = id;
 
