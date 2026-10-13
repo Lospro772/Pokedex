@@ -200,7 +200,11 @@ body {
    BOTÓN DE CARGA INICIAL (IGNICIÓN / POWER ON)
    ========================================================================== */
 .acciones-iniciales {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -230,6 +234,28 @@ body {
   opacity: 0.55;
   cursor: not-allowed;
   transform: none;
+}
+
+.btn-aleatorio {
+  padding: 0.85rem 1.6rem;
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 700;
+  color: #ffffff;
+  background: #0284c7;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.65rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-aleatorio:hover:not(:disabled) {
+  background: #0369a1;
+}
+
+.btn-aleatorio:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ==========================================================================
@@ -329,6 +355,16 @@ body {
 /* ==========================================================================
    MENSAJES DE ESTADO (POLITE LIVE REGION)
    ========================================================================== */
+.contador-resultados {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin: 0.25rem 0 1.25rem 0;
+  letter-spacing: 0.05em;
+}
+
 .mensaje {
   min-height: 1.5rem;
   margin: 1.5rem 0;
@@ -1912,4 +1948,160 @@ body {
     top: 0.85rem;
     right: 0.85rem;
   }
+}
+
+/* ==========================================================================
+   SECCIÓN POKÉMON ALEATORIO (GEN 2 - 9)
+   ========================================================================== */
+.contenedor-aleatorio {
+  max-width: 680px;
+  margin: 0 auto 2.5rem auto;
+}
+
+.aleatorio-tarjeta {
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid rgba(56, 189, 248, 0.4);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.15);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.aleatorio-tarjeta__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.15rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.aleatorio-tarjeta__badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #38bdf8;
+  letter-spacing: 0.08em;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+}
+
+.aleatorio-tarjeta__btn-cerrar {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.aleatorio-tarjeta__btn-cerrar:hover {
+  background: #dc2626;
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.aleatorio-tarjeta__cuerpo {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.aleatorio-tarjeta__visual {
+  flex-shrink: 0;
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle at center, rgba(56, 189, 248, 0.15) 0%, rgba(15, 23, 42, 0.8) 70%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.aleatorio-tarjeta__imagen {
+  width: 120px;
+  height: 120px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.aleatorio-tarjeta__datos {
+  flex: 1;
+  min-width: 200px;
+}
+
+.aleatorio-tarjeta__numero {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #38bdf8;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.aleatorio-tarjeta__nombre {
+  margin: 0.25rem 0 0.5rem 0;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-transform: capitalize;
+}
+
+.aleatorio-tarjeta__tipos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.aleatorio-tarjeta__medidas {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.aleatorio-tarjeta__acciones {
+  margin-top: 1.25rem;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.btn-aleatorio-recargar {
+  padding: 0.6rem 1.25rem;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  border-radius: 0.65rem;
+  font-family: var(--font-main);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-aleatorio-recargar:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+
+.aleatorio-tarjeta--cargando,
+.aleatorio-tarjeta--error {
+  text-align: center;
+  padding: 2rem 1.5rem;
 }

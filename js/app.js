@@ -11,6 +11,9 @@ const modalCuerpo = document.querySelector("#modal-cuerpo");
 const btnCerrarModal = document.querySelector("#btn-cerrar-modal");
 const selectTipo = document.querySelector("#filtro-tipo");
 const btnCargar = document.querySelector("#btn-cargar");
+const btnAleatorio = document.querySelector("#btn-pokemon-aleatorio");
+const contenedorAleatorio = document.querySelector("#contenedor-aleatorio");
+const contadorResultados = document.querySelector("#contador-resultados");
 const contenedorVistas = document.querySelector("#vista-controles");
 const btnVistaCuadricula = document.querySelector("#btn-vista-cuadricula");
 const btnVistaLista = document.querySelector("#btn-vista-lista");
@@ -374,6 +377,7 @@ const cargarPokemonsEnMemoria = async () => {
     mensaje.textContent = "¡Pokédex lista! Puedes buscar por nombre, número o filtrar por tipo.";
     resultado.innerHTML = todosLosPokemon.map(crearTarjetaHTML).join("");
     activarHoverSprites();
+    actualizarContadorResultados(todosLosPokemon.length);
   } catch (error) {
     if (introOverlay) {
       introOverlay.style.opacity = "0";
@@ -550,6 +554,14 @@ const activarHoverSprites = () => {
 // ==========================================================================
 // FILTRADO Y BÚSQUEDA EN MEMORIA (filtrarPokemon)
 // ==========================================================================
+// Actualiza el contador visible de resultados
+const actualizarContadorResultados = (total) => {
+  if (contadorResultados) {
+    contadorResultados.textContent = `${total} resultados`;
+    contadorResultados.style.display = "block";
+  }
+};
+
 // Filtra la lista de Pokémon en memoria según texto, tipo y favoritos
 const filtrarPokemon = () => {
   const busqueda = inputBusqueda.value.trim().toLowerCase();
@@ -562,6 +574,7 @@ const filtrarPokemon = () => {
     mensaje.textContent = "¡Pokédex lista! Puedes buscar por nombre, número o filtrar por tipo.";
     resultado.innerHTML = todosLosPokemon.map(crearTarjetaHTML).join("");
     activarHoverSprites();
+    actualizarContadorResultados(todosLosPokemon.length);
     return;
   }
 
@@ -588,6 +601,7 @@ const filtrarPokemon = () => {
       mensaje.textContent = `No se han encontrado Pokémon${detalleFav}${detalleTipo}${detalleTexto}.`;
     }
     resultado.innerHTML = "";
+    actualizarContadorResultados(0);
     return;
   }
 
@@ -596,6 +610,7 @@ const filtrarPokemon = () => {
   mensaje.textContent = soloFavoritosActivo ? `Mostrando ${encontrados.length} Pokémon favorito(s)` : "";
   resultado.innerHTML = encontrados.map(crearTarjetaHTML).join("");
   activarHoverSprites();
+  actualizarContadorResultados(encontrados.length);
 };
 
 
@@ -636,6 +651,146 @@ btnFiltroFavoritos.addEventListener("click", () => {
   btnFiltroFavoritos.classList.toggle("activo", soloFavoritosActivo);
   filtrarPokemon();
 });
+
+
+// ==========================================================================
+// CONSULTA DE UN POKÉMON INDIVIDUAL (obtenerPokemon)
+// ==========================================================================
+// Consulta /api/v2/pokemon/{id} y devuelve una instancia limpia de Pokemon
+const obtenerPokemon = async (id) => {
+  const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  if (!respuesta.ok) {
+    throw new Error(`Error en Pokémon #${id} (Código ${respuesta.status})`);
+  }
+  const datos = await respuesta.json();
+  return new Pokemon(datos);
+};
+
+
+// ==========================================================================
+// POKÉMON ALEATORIO FUERA DE LA COLECCIÓN INICIAL (152 - 1025)
+// ==========================================================================
+let ultimoIdAleatorioIntentado = null;
+
+// Genera un número entero aleatorio entre 152 y 1025, ambos incluidos
+const generarIdAleatorio = () => {
+  return Math.floor(Math.random() * (1025 - 152 + 1)) + 152;
+};
+
+// Renderiza la tarjeta del Pokémon aleatorio sin añadirlo a los 151
+const mostrarPokemonAleatorio = (pokemon) => {
+  const tiposHTML = pokemon.tipos
+    .map((tipo) => `<span class="tipo tipo--${tipo}">${tipo}</span>`)
+    .join("");
+
+  const tipoPrincipal = pokemon.tipos[0] || "normal";
+  const urlImagen = pokemon.spriteFront || pokemon.spriteBack || `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+
+  contenedorAleatorio.innerHTML = `
+    <div class="aleatorio-tarjeta pokemon--tipo-${tipoPrincipal}">
+      <div class="aleatorio-tarjeta__cabecera">
+        <span class="aleatorio-tarjeta__badge">🎲 POKÉMON ALEATORIO (GEN 2 - 9)</span>
+        <button id="btn-cerrar-aleatorio" class="aleatorio-tarjeta__btn-cerrar" type="button" aria-label="Cerrar">✕</button>
+      </div>
+
+      <div class="aleatorio-tarjeta__cuerpo">
+        <div class="aleatorio-tarjeta__visual">
+          <img 
+            class="aleatorio-tarjeta__imagen" 
+            src="${urlImagen}" 
+            alt="Sprite de ${pokemon.nombre}">
+        </div>
+
+        <div class="aleatorio-tarjeta__datos">
+          <p class="aleatorio-tarjeta__numero">N.º ${formatearId(pokemon.id)}</p>
+          <h2 class="aleatorio-tarjeta__nombre">${pokemon.nombre}</h2>
+          <div class="aleatorio-tarjeta__tipos">${tiposHTML}</div>
+          <div class="aleatorio-tarjeta__medidas">
+            <span><strong>Altura:</strong> ${pokemon.altura} m</span>
+            <span><strong>Peso:</strong> ${pokemon.peso} kg</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="aleatorio-tarjeta__acciones">
+        <button id="btn-otro-aleatorio" class="btn-aleatorio-recargar" type="button">
+          Otro Pokémon aleatorio
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Listener para cerrar la tarjeta
+  const btnCerrar = contenedorAleatorio.querySelector("#btn-cerrar-aleatorio");
+  if (btnCerrar) {
+    btnCerrar.addEventListener("click", () => {
+      contenedorAleatorio.style.display = "none";
+      contenedorAleatorio.innerHTML = "";
+    });
+  }
+
+  // Listener para obtener otro directamente desde la tarjeta
+  const btnOtro = contenedorAleatorio.querySelector("#btn-otro-aleatorio");
+  if (btnOtro) {
+    btnOtro.addEventListener("click", () => consultarPokemonAleatorio());
+  }
+};
+
+// Consulta /api/v2/pokemon/{id} con id aleatorio sin tocar el array de 151
+const consultarPokemonAleatorio = async (idForzado = null) => {
+  const id = idForzado || generarIdAleatorio();
+  ultimoIdAleatorioIntentado = id;
+
+  // Mensaje breve de carga
+  contenedorAleatorio.style.display = "block";
+  contenedorAleatorio.innerHTML = `
+    <div class="aleatorio-tarjeta aleatorio-tarjeta--cargando">
+      <p class="mensaje mensaje--cargando">Consultando Pokémon #${id} en PokéAPI...</p>
+    </div>
+  `;
+
+  if (btnAleatorio) btnAleatorio.disabled = true;
+
+  try {
+    // Reutiliza la función que ya obtiene un Pokémon
+    const pokemon = await obtenerPokemon(id);
+
+    // Muestra el resultado (número, nombre, sprite y tipos)
+    mostrarPokemonAleatorio(pokemon);
+  } catch (error) {
+    // Aviso y opción de reintentar si falla la petición
+    contenedorAleatorio.innerHTML = `
+      <div class="aleatorio-tarjeta aleatorio-tarjeta--error">
+        <p class="mensaje mensaje--error">⚠️ Fallo de conexión al consultar el Pokémon #${id}.</p>
+        <div class="aleatorio-tarjeta__acciones">
+          <button id="btn-reintentar-aleatorio" class="btn-reintentar" type="button">
+            🔄 Reintentar (#${id})
+          </button>
+          <button id="btn-probar-otro-aleatorio" class="btn-aleatorio-recargar" type="button">
+            Probar otro
+          </button>
+        </div>
+      </div>
+    `;
+
+    const btnReintentar = contenedorAleatorio.querySelector("#btn-reintentar-aleatorio");
+    if (btnReintentar) {
+      btnReintentar.addEventListener("click", () => consultarPokemonAleatorio(id));
+    }
+
+    const btnProbarOtro = contenedorAleatorio.querySelector("#btn-probar-otro-aleatorio");
+    if (btnProbarOtro) {
+      btnProbarOtro.addEventListener("click", () => consultarPokemonAleatorio());
+    }
+  } finally {
+    if (btnAleatorio) btnAleatorio.disabled = false;
+  }
+};
+
+// Botón para consultar Pokémon aleatorio
+if (btnAleatorio) {
+  btnAleatorio.addEventListener("click", () => consultarPokemonAleatorio());
+}
 
 
 // ==========================================================================
