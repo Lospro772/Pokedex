@@ -123,6 +123,17 @@
     <!-- Contenedor del Pokémon Aleatorio (Fuera de los 151 originales) -->
     <section id="contenedor-aleatorio" class="contenedor-aleatorio" style="display: none;" aria-live="polite"></section>
 
+        <!-- Zona Mi equipo (Requisito) -->
+    <section id="zona-equipo" class="zona-equipo" aria-live="polite">
+      <div class="zona-equipo__cabecera">
+        <h2>Mi equipo</h2>
+        <button id="btn-vaciar-equipo" class="btn-vaciar-equipo" type="button">Vaciar equipo</button>
+      </div>
+      <div id="lista-equipo" class="zona-equipo__lista">
+        <p class="zona-equipo__vacio">No hay Pokémon en tu equipo (máx. 3).</p>
+      </div>
+    </section>
+
     <section id="resultado" class="resultado"></section>
 
 

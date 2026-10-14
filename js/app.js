@@ -19,6 +19,9 @@ const btnVistaCuadricula = document.querySelector("#btn-vista-cuadricula");
 const btnVistaLista = document.querySelector("#btn-vista-lista");
 const btnFiltroFavoritos = document.querySelector("#btn-filtro-favoritos");
 const contadorFavoritos = document.querySelector("#contador-favoritos");
+const zonaEquipo = document.querySelector("#zona-equipo");
+const listaEquipo = document.querySelector("#lista-equipo");
+const btnVaciarEquipo = document.querySelector("#btn-vaciar-equipo");
 
 
 // ==========================================================================
@@ -526,6 +529,8 @@ const crearTarjetaHTML = (pokemon) => {
 
       <!-- Botón que activa la ventana modal (Requisito 4.6) -->
       <button class="pokemon__btn-detalles" data-id="${pokemon.id}" type="button">Ver detalles</button>
+      <!-- Botón para añadir a Mi equipo (Examen) -->
+      <button class="pokemon__btn-equipo" data-id="${pokemon.id}" type="button">+ Añadir al equipo</button>
     </article>
   `;
 };
@@ -1181,6 +1186,84 @@ resultado.addEventListener("click", (evento) => {
   if (boton) {
     const id = boton.dataset.id;
     abrirDetalles(id);
+    return;
+  }
+
+  // C. Clic en botón de añadir a Mi equipo (Requisito)
+  const btnEquipo = evento.target.closest(".pokemon__btn-equipo");
+  if (btnEquipo) {
+    const id = btnEquipo.dataset.id;
+    agregarAlEquipo(id);
+    return;
   }
 });
+
+
+// ==========================================================================
+// GESTIÓN DE "MI EQUIPO" (Requisito Examen)
+// ==========================================================================
+let miEquipo = [];
+
+// Renderiza los integrantes en la zona "Mi equipo" (número, nombre, sprite y tipos)
+const renderizarEquipo = () => {
+  if (!listaEquipo) return;
+
+  if (miEquipo.length === 0) {
+    listaEquipo.innerHTML = '<p class="zona-equipo__vacio">No hay Pokémon en tu equipo (máx. 3).</p>';
+    return;
+  }
+
+  listaEquipo.innerHTML = miEquipo
+    .map((pokemon) => {
+      const tiposHTML = pokemon.tipos
+        .map((tipo) => `<span class="tipo tipo--${tipo}">${tipo}</span>`)
+        .join("");
+      const sprite = pokemon.spriteFront || pokemon.spriteBack;
+
+      return `
+        <article class="equipo-tarjeta">
+          <p class="equipo-tarjeta__numero">N.º ${formatearId(pokemon.id)}</p>
+          <div class="equipo-tarjeta__sprite">
+            <img src="${sprite}" alt="Sprite de ${pokemon.nombre}">
+          </div>
+          <h3 class="equipo-tarjeta__nombre">${pokemon.nombre}</h3>
+          <div class="equipo-tarjeta__tipos">${tiposHTML}</div>
+        </article>
+      `;
+    })
+    .join("");
+};
+
+// Añade un Pokémon al equipo con máximo de 3 y sin duplicados
+const agregarAlEquipo = (id) => {
+  if (todosLosPokemon.length === 0) return;
+  const pokemon = todosLosPokemon.find((p) => p.id === Number(id));
+  if (!pokemon) return;
+
+  // Requisito: Máximo de tres Pokémon
+  if (miEquipo.length >= 3) {
+    alert("El equipo ya tiene un máximo de 3 Pokémon.");
+    return;
+  }
+
+  // Requisito: No se permitirá añadir dos veces el mismo Pokémon
+  if (miEquipo.some((p) => p.id === pokemon.id)) {
+    alert(`El Pokémon ${pokemon.nombre} ya forma parte de tu equipo.`);
+    return;
+  }
+
+  miEquipo.push(pokemon);
+  renderizarEquipo();
+};
+
+// Requisito: Único botón para vaciar completamente el equipo
+const vaciarEquipo = () => {
+  miEquipo = [];
+  renderizarEquipo();
+};
+
+// Escuchador de evento para vaciar equipo
+if (btnVaciarEquipo) {
+  btnVaciarEquipo.addEventListener("click", vaciarEquipo);
+}
 
